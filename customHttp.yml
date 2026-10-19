@@ -1,0 +1,27 @@
+customHeaders:
+  - pattern: '**/*'
+    headers:
+      - key: Strict-Transport-Security
+        value: max-age=31536000; includeSubDomains
+      - key: X-Content-Type-Options
+        value: nosniff
+      - key: X-Frame-Options
+        value: DENY
+      - key: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - key: Permissions-Policy
+        value: camera=(self), geolocation=(self), microphone=()
+      - key: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.ggpht.com https://*.googleusercontent.com https://www.recaptcha.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.googleapis.com https://*.gstatic.com https://*.google.com https://*.ggpht.com https://*.googleusercontent.com https://*.amazonaws.com https://*.agreeta.com; connect-src 'self' https://*.agreeta.com https://*.amazonaws.com https://customer-api.open-meteo.com https://*.googleapis.com https://*.google.com https://*.gstatic.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebasedatabase.app wss://*.firebasedatabase.app data: blob:; worker-src 'self' blob:; frame-src 'self' https://www.google.com https://recaptcha.google.com https://www.recaptcha.net https://*.firebaseapp.com; object-src 'none'; base-uri 'self';"
+  - pattern: 'index.html'
+    headers:
+      - key: Cache-Control
+        value: no-cache, no-store, must-revalidate
+  - pattern: 'sw.js'
+    headers:
+      - key: Cache-Control
+        value: no-cache, no-store, must-revalidate
+  - pattern: 'assets/**/*'
+    headers:
+      - key: Cache-Control
+        value: public, max-age=31536000, immutable

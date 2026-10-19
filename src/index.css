@@ -1,0 +1,93 @@
+:root {
+  --gs-bg: #F5F7F5;
+  --gs-surface: #FFFFFF;
+  --gs-sage-card: #E8F0E6;
+  --gs-bottom-nav: #E8F3E9;
+  --gs-nav-selected: #1B5E20;
+  --gs-nav-unselected: #6B7C70;
+  --gs-accent-red: #D32F2F;
+  --gs-text-primary: #0D1F12;
+  --gs-text-secondary: #4A5A4E;
+  --gs-text-muted: #6B7A6F;
+  --gs-outline-soft: #DDE5DD;
+  --gs-outline-strong: #B8C4B8;
+  --gs-done-green: #2E7D32;
+  --gs-filter-pill-selected: #D8EAD4;
+  --gs-sort-chip-selected: #E3EDE3;
+  --gs-login-card: #F7F7F7;
+  --gs-login-field-fill: #F5F5F5;
+  --gs-login-gradient-start: #46923A;
+  --gs-login-gradient-end: #205318;
+  --gs-login-btn-start: rgba(65, 250, 52, 0.25);
+  --gs-login-btn-end: rgba(17, 78, 38, 0.25);
+
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--gs-bg);
+  color: var(--gs-text-primary);
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/* Ensure native date inputs with opacity:0 stretch the calendar-picker-indicator over 100% of their area */
+.gs-date-picker-input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}

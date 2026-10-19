@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <rect width="512" height="512" rx="96" fill="#1e3a8a"/>
+  <circle cx="256" cy="256" r="180" fill="#15803d" />
+  <path d="M 256 120 L 320 220 L 192 220 Z" fill="#4ade80"/>
+  <circle cx="256" cy="310" r="30" fill="#ffffff"/>
+  <text x="256" y="420" font-family="sans-serif" font-size="42" font-weight="bold" fill="#ffffff" text-anchor="middle">GroundSense</text>
+</svg>

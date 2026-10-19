@@ -1,0 +1,2 @@
+/api/*  https://celesterra.agreeta.com/GolfCourse_Kharghar_WebAPI_Dev/api/:splat  200
+/*  /index.html  200
