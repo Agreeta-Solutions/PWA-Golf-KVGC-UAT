@@ -9,7 +9,7 @@ import {
 import {
   fetchWeatherForecast,
   extractNext5Hours,
-  getActiveCourseInfo,
+  KHARGHAR_COURSE,
   type WeatherApiResponse,
   type HourlyForecastItem
 } from '../services/weatherService';
@@ -61,8 +61,9 @@ export const AISummaryScreen: React.FC = () => {
     if (isLowRiskExpanded) revealSection(lowRiskSectionRef);
   }, [isLowRiskExpanded]);
 
-  // Active course information
-  const courseInfo = useMemo(() => getActiveCourseInfo(), []);
+  // Weather and Pest & Disease forecasts use Kharghar Golf Course
+  // (the hole map and the rest of the app still follow the logged-in course)
+  const courseInfo = KHARGHAR_COURSE;
 
   // Tick every second so the minute rolls over promptly; React skips the re-render when the
   // text is unchanged. Paused while the app is hidden and repainted on return.

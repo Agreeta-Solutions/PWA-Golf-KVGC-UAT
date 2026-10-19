@@ -61,6 +61,13 @@ export interface CourseLocationInfo {
   longitude: number;
 }
 
+/** Kharghar Golf Course — used by the Weather and Pest & Disease page. */
+export const KHARGHAR_COURSE: CourseLocationInfo = {
+  courseName: 'Kharghar Golf Course',
+  latitude: 19.0356,
+  longitude: 73.0699
+};
+
 /**
  * Returns dynamic course location and coordinates matching Android course resolution.
  */
@@ -69,13 +76,7 @@ export function getActiveCourseInfo(): CourseLocationInfo {
   const configuredEnvBase = (import.meta.env.VITE_API_BASE_URL as string)?.trim() || '';
   const apiBase = (configuredEnvBase || session?.apiBaseUrl || '').toLowerCase();
 
-  if (apiBase.includes('kharghar')) {
-    return {
-      courseName: 'Kharghar Golf Course',
-      latitude: 19.0356,
-      longitude: 73.0699
-    };
-  }
+  if (apiBase.includes('kharghar')) return KHARGHAR_COURSE;
   if (apiBase.includes('dirab')) {
     return {
       courseName: 'Dirab Golf Course',

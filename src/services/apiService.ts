@@ -900,6 +900,25 @@ export function getCachedMowingDirections(
 }
 
 /**
+ * GET that retries on 429 Too Many Requests (server or Lambda throttling), waiting for
+ * Retry-After when given, otherwise 0.5 s then 1.5 s.
+ */
+async function getWithRetryOn429<T = any>(url: string, config: Record<string, any>, retries = 2): Promise<any> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await axios.get<T>(url, config);
+    } catch (err: any) {
+      if (err?.response?.status !== 429 || attempt >= retries) throw err;
+      const retryAfterSec = Number(err.response.headers?.['retry-after']);
+      const waitMs = Number.isFinite(retryAfterSec) && retryAfterSec > 0
+        ? Math.min(retryAfterSec * 1000, 5000)
+        : 500 * Math.pow(3, attempt);
+      await new Promise(resolve => setTimeout(resolve, waitMs));
+    }
+  }
+}
+
+/**
  * Fetches mowing directions for a hole and section on a specific date.
  * Matches Android TaskApiService.kt: @GET("api/Mowing/") query holeId, sectionId, mowingDate.
  */
@@ -939,13 +958,13 @@ export async function fetchMowingDirections(
       let response: any;
       try {
         // Primary: Android TaskApiService.kt uses @GET("api/Mowing/")
-        response = await axios.get<any>(`${BASE_URL}/Mowing/?${queryString}`, {
+        response = await getWithRetryOn429(`${BASE_URL}/Mowing/?${queryString}`, {
           headers: { 'Authorization': authHeader },
           timeout: 8000
         });
       } catch (err: any) {
         if (err?.response?.status === 404 || err?.response?.status === 405 || !err?.response) {
-          response = await axios.get<any>(`${BASE_URL}/Mowing?${queryString}`, {
+          response = await getWithRetryOn429(`${BASE_URL}/Mowing?${queryString}`, {
             headers: { 'Authorization': authHeader },
             timeout: 8000
           });
@@ -1076,17 +1095,23 @@ export async function fetchMowingDirectionsSectionWise(
     return bySection;
   }
 
-  // 2. Fetch mowing directions in parallel for each section on the hole (matching Android TaskViewModel.kt)
-  const results = await Promise.all(
-    distinctIds.map(async (secId) => {
-      try {
-        const details = await fetchMowingDirections(holeId, secId, date);
-        return { secId, details };
-      } catch {
-        return { secId, details: [] };
-      }
-    })
-  );
+  // 2. Fetch mowing directions for each section on the hole (matching Android TaskViewModel.kt),
+  // at most 2 requests at a time so a hole with many sections does not trigger 429 throttling.
+  const MOWING_CONCURRENCY = 2;
+  const results: Array<{ secId: number; details: MowingDirectionDetail[] }> = [];
+  for (let i = 0; i < distinctIds.length; i += MOWING_CONCURRENCY) {
+    const batch = await Promise.all(
+      distinctIds.slice(i, i + MOWING_CONCURRENCY).map(async (secId) => {
+        try {
+          const details = await fetchMowingDirections(holeId, secId, date);
+          return { secId, details };
+        } catch {
+          return { secId, details: [] as MowingDirectionDetail[] };
+        }
+      })
+    );
+    results.push(...batch);
+  }
 
   results.forEach(({ secId, details }) => {
     if (details && details.length > 0) {
