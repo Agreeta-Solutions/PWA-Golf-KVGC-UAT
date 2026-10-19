@@ -1005,9 +1005,9 @@ export async function fetchMowingDirections(
           // The API keeps every earlier save; only the newest entry per section is current.
           const details = latestEntryPerSection(allEntries);
 
-          if (details.length > 0) {
-            l1MowingCache.set(cacheKey, { details, at: Date.now() });
-          }
+          // Cache empty results too, so sections with no mowing entry are not re-requested
+          // on every reload (expires with MOWING_CACHE_TTL_MS like any other result).
+          l1MowingCache.set(cacheKey, { details, at: Date.now() });
           return details;
         }
       }

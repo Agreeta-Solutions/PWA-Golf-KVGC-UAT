@@ -480,6 +480,19 @@ export const HoleViewScreen: React.FC<HoleViewScreenProps> = ({
     return isoDateString.slice(0, 10).replace(/-/g, '.');
   }, []);
 
+  // Tasks are re-polled every few seconds (new array each time). The mowing loader only cares about
+  // which sections this hole's tasks reference, so it depends on this stable key instead of `tasks`;
+  // otherwise every poll would re-request mowing directions for the whole hole.
+  const tasksRef = useRef(tasks);
+  tasksRef.current = tasks;
+  const holeTaskSectionKey = useMemo(
+    () =>
+      Array.from(new Set(tasks.filter(t => t.holeId === selectedHoleId && t.sectionId != null).map(t => t.sectionId as number)))
+        .sort((a, b) => a - b)
+        .join(','),
+    [tasks, selectedHoleId]
+  );
+
   // Fetch mowing directions for all sections of the hole when in LANDSCAPE mode
   useEffect(() => {
     setSelectedMowingSectionId(null);
@@ -513,7 +526,7 @@ export const HoleViewScreen: React.FC<HoleViewScreenProps> = ({
       }
 
       // 3. Sections from tasks for this hole
-      tasks.filter(t => t.holeId === selectedHoleId).forEach(t => {
+      tasksRef.current.filter(t => t.holeId === selectedHoleId).forEach(t => {
         if (t.sectionId != null) candidateSecIds.add(t.sectionId);
       });
 
@@ -559,7 +572,7 @@ export const HoleViewScreen: React.FC<HoleViewScreenProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [activeLayer, selectedHoleId, kmlSectionKey, landscapeSelectedDate, rawSections, uiSections, tasks]);
+  }, [activeLayer, selectedHoleId, kmlSectionKey, landscapeSelectedDate, rawSections, uiSections, holeTaskSectionKey]);
 
   // Helper to find the section description for any section ID on the current hole
   const getSectionDescription = useCallback((secId: number): string => {
